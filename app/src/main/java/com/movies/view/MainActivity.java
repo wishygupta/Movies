@@ -29,7 +29,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements PopularAdapter.MovieClickListener {
+public class MainActivity extends AppCompatActivity implements PopularAdapter.MovieClickListener,PlayingAdapter.PlayingMovieClickListener {
     @Inject
     NetworkCall apiCall;
     @Inject
@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements PopularAdapter.Mo
         popularMovies.setLayoutManager(llm);
         popularMovies.setAdapter(popularAdapter);
         popularAdapter.setClickListener(this);
+        playingAdapter.setClickListener(this);
         popularMovies.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -125,9 +126,18 @@ public class MainActivity extends AppCompatActivity implements PopularAdapter.Mo
     }
 
     @Override
+    public void playingMovieClicked(int moviedId) {
+        moveToNextScreen(moviedId);
+    }
+
+    @Override
     public void movieClicked(int moviedId) {
+        moveToNextScreen(moviedId);
+    }
+
+    private void moveToNextScreen(int movId){
         Intent intent = new Intent(this, MovieDetailActivity.class);
-        intent.putExtra("movieId", moviedId);
+        intent.putExtra("movieId", movId);
         startActivity(intent);
     }
 }

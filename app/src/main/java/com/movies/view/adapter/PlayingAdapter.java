@@ -26,7 +26,7 @@ import butterknife.ButterKnife;
 
 public class PlayingAdapter extends RecyclerView.Adapter<PlayingAdapter.ViewHolder> {
     List<Movie> movieList=new ArrayList<>();
-
+    PlayingMovieClickListener clickListener;
     public PlayingAdapter() {
     }
 
@@ -53,10 +53,19 @@ public class PlayingAdapter extends RecyclerView.Adapter<PlayingAdapter.ViewHold
             Glide.with(holder.itemView.getContext()).load(imgUrl.toString()).
                     apply(new RequestOptions().override(150, 250)).into(holder.movieImg);
         }
-
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (clickListener != null)
+                    clickListener.playingMovieClicked(movieList.get(position).getMovieId());
+            }
+        });
 
     }
 
+    public void setClickListener(PlayingMovieClickListener clickListener) {
+        this.clickListener = clickListener;
+    }
 
     @Override
     public int getItemCount() {
@@ -75,5 +84,8 @@ public class PlayingAdapter extends RecyclerView.Adapter<PlayingAdapter.ViewHold
         }
     }
 
+    public interface PlayingMovieClickListener {
+        void playingMovieClicked(int moviedId);
+    }
 
 }
