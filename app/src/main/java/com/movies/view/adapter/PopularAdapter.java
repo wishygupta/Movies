@@ -1,10 +1,14 @@
 package com.movies.view.adapter;
 
 
+import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
@@ -33,12 +37,15 @@ import butterknife.ButterKnife;
 public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHolder> {
     List<Movie> movieList = new ArrayList<>();
     MovieClickListener clickListener;
+    Context context;
 
-    public PopularAdapter() {
+    public PopularAdapter(Context context) {
+        this
+                .context = context;
     }
 
     public void setDataList(List<Movie> movieList) {
-        this.movieList=movieList;
+        this.movieList = movieList;
         notifyDataSetChanged();
     }
 
@@ -77,15 +84,19 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
             holder.movieDate.setText(dt1.format(date));
         }
         holder.movieDuration.setText(movieList.get(position).getVotes() + " Votes");
-        holder.rating.setText(movieList.get(position).getPopularity() * 10 + "");
-        if (movieList.get(position).getPopularity() > 5) {
-            holder.rating.setFinishedStrokeColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.holo_green_dark));
-            holder.rating.setUnfinishedStrokeColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.holo_green_light));
-        } else {
-            holder.rating.setUnfinishedStrokeColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.holo_orange_dark));
-            holder.rating.setFinishedStrokeColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.holo_orange_light));
-        }
 
+        if (movieList.get(position).getPopularity() > 5) {
+            holder.rating.setProgressDrawable(context.getResources().getDrawable(R.drawable.circular_progress_green));
+        } else {
+            holder.rating.setProgressDrawable(context.getResources().getDrawable(R.drawable.circular_progress_orange));
+        }
+        holder.ratingInfo.setText((int) movieList.get(position).getPopularity() * 10 + "");
+        holder.rating.setProgress((int) movieList.get(position).getPopularity() * 10);
+        holder.rating.setSecondaryProgress(100);
+        holder.rating.setMax(100);
+
+
+//        }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,8 +122,10 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
         TextView movieDate;
         @BindView(R.id.movieDuration)
         TextView movieDuration;
+        @BindView(R.id.ratingInfo)
+        TextView ratingInfo;
         @BindView(R.id.rating)
-        DonutProgress rating;
+        ProgressBar rating;
 
 
         ViewHolder(View v) {

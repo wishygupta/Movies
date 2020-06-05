@@ -55,14 +55,29 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/movieImg" />
 
-    <com.github.lzyzsd.circleprogress.DonutProgress
+    <ProgressBar
         android:id="@+id/rating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="20dp"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="65"
+        android:secondaryProgress="100"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        custom:donut_progress="30" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/ratingInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/rating"
+        app:layout_constraintLeft_toLeftOf="@+id/rating"
+        app:layout_constraintRight_toRightOf="@+id/rating"
+        app:layout_constraintTop_toTopOf="@+id/rating" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

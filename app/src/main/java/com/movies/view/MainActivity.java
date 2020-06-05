@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements PopularAdapter.Mo
     private void init() {
         presenter.createLoadingDialog(this);
         playingAdapter = new PlayingAdapter();
-        popularAdapter = new PopularAdapter();
+        popularAdapter = new PopularAdapter(this);
         playingMovies.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         playingMovies.setAdapter(playingAdapter);
         final LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
