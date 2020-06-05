@@ -1,5 +1,6 @@
 package com.movies.view;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,9 +13,13 @@ import com.movies.R;
 import com.movies.dag.MyApplication;
 import com.movies.network.NetworkCall;
 import com.movies.network.model.ApiResponse;
+import com.movies.network.model.Movie;
 import com.movies.view.adapter.MovieDetailActivity;
 import com.movies.view.adapter.PlayingAdapter;
 import com.movies.view.adapter.PopularAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -35,6 +40,9 @@ public class MainActivity extends AppCompatActivity implements PopularAdapter.Mo
     RecyclerView playingMovies;
     @BindView(R.id.popularMovies)
     RecyclerView popularMovies;
+    List<Movie> popularList = new ArrayList<>();
+    int totalPages;
+    int pageNum = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +60,24 @@ public class MainActivity extends AppCompatActivity implements PopularAdapter.Mo
         popularAdapter = new PopularAdapter();
         playingMovies.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         playingMovies.setAdapter(playingAdapter);
-        popularMovies.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        final LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        popularMovies.setLayoutManager(llm);
         popularMovies.setAdapter(popularAdapter);
         popularAdapter.setClickListener(this);
+        popularMovies.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (llm.findLastCompletelyVisibleItemPosition() == popularList.size() - 1) {
+                    if (pageNum == totalPages) {
+                        return;
+                    }
+                    pageNum++;
+                    fetchPopularMovies();
+                }
+            }
+        });
+
     }
 
     private void fetchPlayingMovies() {
@@ -78,13 +101,18 @@ public class MainActivity extends AppCompatActivity implements PopularAdapter.Mo
     }
 
     private void fetchPopularMovies() {
+
         presenter.showLoading();
-        apiCall.popular().enqueue(new Callback<ApiResponse>() {
+
+        apiCall.popular(pageNum).enqueue(new Callback<ApiResponse>() {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 presenter.stopLoading();
-                if (response.body().getMovieList() != null) {
-                    popularAdapter.setDataList(response.body().getMovieList());
+                if (response.body() != null) {
+                    totalPages = response.body().getTotalPages();
+                    pageNum = response.body().getPageNum();
+                    popularList.addAll(response.body().getMovieList());
+                    popularAdapter.setDataList(popularList);
                     popularAdapter.notifyDataSetChanged();
                 }
             }

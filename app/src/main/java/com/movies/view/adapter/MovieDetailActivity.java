@@ -2,22 +2,31 @@ package com.movies.view.adapter;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.flexbox.FlexboxLayout;
 import com.movies.AppPresenter;
 import com.movies.R;
 import com.movies.dag.MyApplication;
 import com.movies.network.NetworkCall;
 import com.movies.network.NetworkConstant;
+import com.movies.network.model.Genre;
 import com.movies.network.model.Movie;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -42,6 +51,8 @@ public class MovieDetailActivity extends AppCompatActivity {
     AppCompatTextView movieDuration;
     @BindView(R.id.movieDescription)
     AppCompatTextView movieDescription;
+    @BindView(R.id.genresView)
+    FlexboxLayout genresView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +71,8 @@ public class MovieDetailActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Movie> call, Response<Movie> response) {
                 presenter.stopLoading();
-                if(response.body()!=null){
-                    Movie movie=response.body();
+                if (response.body() != null) {
+                    Movie movie = response.body();
                     if (movie.getPosterPath() != null) {
                         StringBuilder imgUrl = new StringBuilder();
                         imgUrl.append(NetworkConstant.IMG_URL);
@@ -83,8 +94,11 @@ public class MovieDetailActivity extends AppCompatActivity {
                         movieDate.setText(dt1.format(date));
                     }
                     movieDuration.setText(movie.getVotes() + " Votes");
-                    if(movie.getOverview()!=null)
+                    if (movie.getOverview() != null)
                         movieDescription.setText(movie.getOverview());
+                    if (movie.getGenres() != null)
+                        addGenresToLayout(movie.getGenres());
+
                 }
 
             }
@@ -95,6 +109,22 @@ public class MovieDetailActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void addGenresToLayout(List<Genre> genres) {
+        for (int i = 0; i < genres.size(); i++) {
+            TextView genre = new TextView(this);
+            FlexboxLayout.LayoutParams params=new FlexboxLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.setMargins(10,0,10,0);
+            genre.setLayoutParams(params);
+            genre.setText(genres.get(i).getName());
+            genre.setTextColor(ContextCompat.getColor(this, android.R.color.white));
+            genre.setPadding(10, 10, 10, 10);
+            genre.setBackgroundColor(ContextCompat.getColor(this, android.R.color.black));
+            genresView.addView(genre);
+
+
+        }
     }
 
     private void init() {

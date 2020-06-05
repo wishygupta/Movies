@@ -38,7 +38,7 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
     }
 
     public void setDataList(List<Movie> movieList) {
-        this.movieList = movieList;
+        this.movieList=movieList;
         notifyDataSetChanged();
     }
 
