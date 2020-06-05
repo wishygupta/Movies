@@ -119,8 +119,8 @@ public class MovieDetailActivity extends AppCompatActivity {
             genre.setLayoutParams(params);
             genre.setText(genres.get(i).getName());
             genre.setTextColor(ContextCompat.getColor(this, android.R.color.white));
-            genre.setPadding(10, 10, 10, 10);
-            genre.setBackgroundColor(ContextCompat.getColor(this, android.R.color.black));
+            genre.setPadding(15, 10, 15, 10);
+            genre.setBackground(getResources().getDrawable(R.drawable.rounded_rectangle));
             genresView.addView(genre);
 
 
